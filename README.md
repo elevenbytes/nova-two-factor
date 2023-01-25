@@ -7,8 +7,12 @@
 [![Latest Stable Version](http://poser.pugx.org/visanduma/nova-two-factor/v)](https://packagist.org/packages/visanduma/nova-two-factor) [![Total Downloads](http://poser.pugx.org/visanduma/nova-two-factor/downloads)](https://packagist.org/packages/visanduma/nova-two-factor) [![Latest Unstable Version](http://poser.pugx.org/visanduma/nova-two-factor/v/unstable)](https://packagist.org/packages/visanduma/nova-two-factor) [![License](http://poser.pugx.org/visanduma/nova-two-factor/license)](https://packagist.org/packages/visanduma/nova-two-factor) [![PHP Version Require](http://poser.pugx.org/visanduma/nova-two-factor/require/php)](https://packagist.org/packages/visanduma/nova-two-factor)
 
 # Nova-Two-Factor
-Laravel nova in-dashboard 2FA security feature
+Laravel nova in-dashboard 2FA security feature including email OPT and Google App codes. Fork of visanduma/nova-two-factor package.
 
+## Install
+```
+composer install elbytes/nova-two-factor
+```
 
 ## Look
 
