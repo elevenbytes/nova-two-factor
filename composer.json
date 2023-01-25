@@ -1,0 +1,37 @@
+{
+    "name": "elbytes/nova-two-factor",
+    "description": "Nova Two Factor Authentication",
+    "keywords": [
+        "laravel",
+        "nova"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "11bytes",
+            "email": "kontakt@11bytes.de"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "bacon/bacon-qr-code": "^2.0",
+        "pragmarx/google2fa-laravel": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Elbytes\\NovaTwoFactor\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Elbytes\\NovaTwoFactor\\ToolServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
