@@ -1,12 +1,8 @@
-<p align="center">
+![screenshot](/resources/img/nova-two-factor-banner.png)
 
-<img src="https://github.com/Visanduma/nova-two-factor/blob/c26d41cb38c5850e7ee3863e34e5fd3b0c3f18a5/resources/img/nova-two-factor-banner.png?raw=true" />
+<!-- [![Latest Stable Version](http://poser.pugx.org/visanduma/nova-two-factor/v)](https://packagist.org/packages/visanduma/nova-two-factor) [![Total Downloads](http://poser.pugx.org/visanduma/nova-two-factor/downloads)](https://packagist.org/packages/visanduma/nova-two-factor) [![Latest Unstable Version](http://poser.pugx.org/visanduma/nova-two-factor/v/unstable)](https://packagist.org/packages/visanduma/nova-two-factor) [![License](http://poser.pugx.org/visanduma/nova-two-factor/license)](https://packagist.org/packages/visanduma/nova-two-factor) [![PHP Version Require](http://poser.pugx.org/visanduma/nova-two-factor/require/php)](https://packagist.org/packages/visanduma/nova-two-factor) -->
 
-</p>
-
-[![Latest Stable Version](http://poser.pugx.org/visanduma/nova-two-factor/v)](https://packagist.org/packages/visanduma/nova-two-factor) [![Total Downloads](http://poser.pugx.org/visanduma/nova-two-factor/downloads)](https://packagist.org/packages/visanduma/nova-two-factor) [![Latest Unstable Version](http://poser.pugx.org/visanduma/nova-two-factor/v/unstable)](https://packagist.org/packages/visanduma/nova-two-factor) [![License](http://poser.pugx.org/visanduma/nova-two-factor/license)](https://packagist.org/packages/visanduma/nova-two-factor) [![PHP Version Require](http://poser.pugx.org/visanduma/nova-two-factor/require/php)](https://packagist.org/packages/visanduma/nova-two-factor)
-
-# Nova-Two-Factor
+# Nova Two Factor
 Laravel nova in-dashboard 2FA security feature including email OPT and Google App codes. Fork of visanduma/nova-two-factor package.
 
 ## Install
