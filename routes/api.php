@@ -18,7 +18,7 @@ use Lifeonscreen\Google2fa\Google2FAAuthenticator;
 
 Route::get('/register', [TwoFactorController::class,'registerUser']);
 
-Route::match(['get','post'],'/recover', [TwoFactorController::class,'recover'])->name('nova-two-factor.recover');
+Route::match(['get','post'], '/recover', [TwoFactorController::class,'recover'])->name('nova-two-factor.recover');
 Route::get('/resend-code', [TwoFactorController::class,'resendEmail'])->name('nova-two-factor.resend-code');
 
 Route::get('/status', [TwoFactorController::class,'getStatus']);

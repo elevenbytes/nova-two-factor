@@ -12,7 +12,7 @@ Laravel nova in-dashboard 2FA security feature
 
 ## Look
 
-Setup 2FA
+Select type (email/Google app) and setup 2FA
 
 ![screenshot](/resources/img/sc-1.png)
 
@@ -26,7 +26,7 @@ Nova login screen with 2FA security
 
 1. Pubish config & migration
 
-`` php artisan vendor:publish --provider="Visanduma\NovaTwoFactor\ToolServiceProvider" ``
+`` php artisan vendor:publish --provider="Elbytes\NovaTwoFactor\ToolServiceProvider" ``
 
 
 Change configs as your needs
@@ -58,7 +58,7 @@ return [
 
 namespace App\Models;
 
-use Visanduma\NovaTwoFactor\ProtectWith2FA;
+use Elbytes\NovaTwoFactor\ProtectWith2FA;
 
 class User extends Authenticatable{
 
@@ -86,7 +86,7 @@ class User extends Authenticatable{
 
     'middleware' => [
         ...
-        \Visanduma\NovaTwoFactor\Http\Middleware\TwoFa::class
+        \Elbytes\NovaTwoFactor\Http\Middleware\TwoFa::class
     ],
 
 ```
@@ -103,7 +103,7 @@ public function tools()
     {
         return [
             ...
-            new \Visanduma\NovaTwoFactor\NovaTwoFactor()
+            new \Elbytes\NovaTwoFactor\NovaTwoFactor()
 
         ];
     }

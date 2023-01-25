@@ -27,8 +27,8 @@ class TwoFactorController extends Controller
         $secretKey = $google2fa->generateSecretKey();
 
         $recoveryKey = strtoupper(Str::random(16));
-        $recoveryKey = str_split($recoveryKey,4);
-        $recoveryKey = implode("-",$recoveryKey);
+        $recoveryKey = str_split($recoveryKey, 4);
+        $recoveryKey = implode("-", $recoveryKey);
 
         $recoveryKeyHashed = bcrypt($recoveryKey);
 
@@ -63,7 +63,7 @@ class TwoFactorController extends Controller
         $type = request()->get('type');
         $otp  = request()->get('otp');
 
-        if( $type === 'google' ) {
+        if ($type === 'google') {
             request()->merge(['one_time_password' => $otp]);
 
             $authenticator = app(TwoFaAuthenticator::class)->boot(request());
@@ -83,7 +83,7 @@ class TwoFactorController extends Controller
             }
         }
 
-        if( $type === 'email' ) {
+        if ($type === 'email') {
             $userTwoFa = TwoFa::where('user_id', auth()->id())
                               ->where('email_code', $otp)
                               ->where('email_updated_at', '>=', now()->subMinutes(2))
@@ -104,7 +104,7 @@ class TwoFactorController extends Controller
         // auth fail
         return response()->json([
             'message' => 'Invalid OTP !. Please try again'
-        ],422);
+        ], 422);
     }
 
     public function toggle2Fa(Request $request)
@@ -120,7 +120,8 @@ class TwoFactorController extends Controller
         ]);
     }
 
-    public function reset2Fa() {
+    public function reset2Fa()
+    {
         auth()->user()->twoFa()->delete();
 
         return response()->json([
@@ -171,7 +172,7 @@ class TwoFactorController extends Controller
             'one_time_password'=>'required',
         ]);
 
-        if( auth()->user()->twoFa->type === 'google' ) {
+        if (auth()->user()->twoFa->type === 'google') {
             $authenticator = app(TwoFaAuthenticator::class)->boot(request());
 
             if ($authenticator->isAuthenticated()) {
@@ -179,7 +180,7 @@ class TwoFactorController extends Controller
             }
         }
 
-        if( auth()->user()->twoFa->type === 'email' ) {
+        if (auth()->user()->twoFa->type === 'email') {
             $code = TwoFa::where('user_id', auth()->id())
                             ->where('email_code', $request->one_time_password)
                             ->where('email_updated_at', '>=', now()->subMinutes(2))
@@ -196,15 +197,15 @@ class TwoFactorController extends Controller
 
     public function recover(Request $request)
     {
-        if($request->isMethod('get')){
+        if ($request->isMethod('get')) {
             return view('nova-two-factor::recover');
         }
 
-        if(Hash::check($request->get('recovery_code'), auth()->user()->twoFa->recovery)){
+        if (Hash::check($request->get('recovery_code'), auth()->user()->twoFa->recovery)) {
             // reset 2fa
             auth()->user()->twoFa()->delete();
             return redirect()->to(config('nova.path'));
-        }else{
+        } else {
             return back()->withErrors(['Incorrect recovery code !']);
         }
     }

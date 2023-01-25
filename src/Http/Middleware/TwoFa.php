@@ -1,8 +1,5 @@
 <?php
-
-
 namespace Elbytes\NovaTwoFactor\Http\Middleware;
-
 
 use Closure;
 use Illuminate\Support\Facades\Session;
@@ -28,24 +25,24 @@ class TwoFa
             'logout'
         ];
 
-        $except = array_merge($except,config('nova-two-factor.excect_routes'));
+        $except = array_merge($except, config('nova-two-factor.excect_routes'));
 
-        if (!config('nova-two-factor.enabled') || in_array($request->path(),$except)) {
+        if (!config('nova-two-factor.enabled') || in_array($request->path(), $except)) {
             return $next($request);
         }
 
         // turn off security if no user2fa record
-        if( auth()->guest() || !auth()->user()->twoFa){
+        if (auth()->guest() || !auth()->user()->twoFa) {
             return $next($request);
         }
 
         // turn off security if 2fa is off
-        if(auth()->user()->twoFa && ! auth()->user()->twoFa->twofa_enabled){
+        if (auth()->user()->twoFa && ! auth()->user()->twoFa->twofa_enabled) {
             return $next($request);
         }
 
         // Wait Google code for "google_2fa" type.
-        if( auth()->user()->twoFa->type === 'google' )  {
+        if (auth()->user()->twoFa->type === 'google') {
             $authenticator = app(TwoFaAuthenticator::class)->boot($request);
             if (! $authenticator->isAuthenticated()) {
                 return response(view('nova-two-factor::sign-in'));
@@ -53,9 +50,9 @@ class TwoFa
         }
 
         // Send Email for "email_2fa" type.
-        if( auth()->user()->twoFa->type === 'email' )  {
-            if (!Session::has('user_email_2fa') ) {
-                if(auth()->user()->twoFa->email_updated_at < now()->subMinutes(2)) {
+        if (auth()->user()->twoFa->type === 'email') {
+            if (!Session::has('user_email_2fa')) {
+                if (auth()->user()->twoFa->email_updated_at < now()->subMinutes(2)) {
                     auth()->user()->generateEmailCode();
                 }
                 return response(view('nova-two-factor::sign-in'));
