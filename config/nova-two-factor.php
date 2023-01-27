@@ -12,5 +12,7 @@ return [
 
     'excect_routes' => [
         //
-    ]
+    ],
+
+    'auth_caching_days' => 30,
 ];

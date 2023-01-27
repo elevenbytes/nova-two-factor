@@ -2,7 +2,7 @@
 namespace Elbytes\NovaTwoFactor\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 use Elbytes\NovaTwoFactor\TwoFaAuthenticator;
 
 class TwoFa
@@ -51,7 +51,7 @@ class TwoFa
 
         // Send Email for "email_2fa" type.
         if (auth()->user()->twoFa->type === 'email') {
-            if (!Session::has('user_email_2fa')) {
+            if (!Cache::get('user_' . auth()->id() . '_email_2fa')) {
                 if (auth()->user()->twoFa->email_updated_at < now()->subMinutes(2)) {
                     auth()->user()->generateEmailCode();
                 }

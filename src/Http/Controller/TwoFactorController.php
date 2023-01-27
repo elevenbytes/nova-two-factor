@@ -2,22 +2,30 @@
 
 namespace Elbytes\NovaTwoFactor\Http\Controller;
 
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FA\Google2FA as G2fa;
 use Elbytes\NovaTwoFactor\Models\TwoFa;
 use Elbytes\NovaTwoFactor\TwoFaAuthenticator;
+use PragmaRX\Google2FALaravel\Support\Constants;
 
 class TwoFactorController extends Controller
 {
+    /**
+     * Register 2FA for user.
+     *
+     * @return array|\Illuminate\Http\JsonResponse
+     * @throws \PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException
+     * @throws \PragmaRX\Google2FA\Exceptions\InvalidCharactersException
+     * @throws \PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException
+     */
     public function registerUser()
     {
 
-        if(auth()->user()->twoFa && auth()->user()->twoFa->confirmed == 1){
+        if (auth()->user()->twoFa && auth()->user()->twoFa->confirmed == 1) {
             return response()->json([
                 'message' => 'Already verified !'
             ]);
@@ -58,6 +66,13 @@ class TwoFactorController extends Controller
         return $data;
     }
 
+    /**
+     * Verify Code
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function verifyOtp()
     {
         $type = request()->get('type');
@@ -107,6 +122,13 @@ class TwoFactorController extends Controller
         ], 422);
     }
 
+    /**
+     * Enable/disable 2FA for user.
+     *
+     * @param  Request  $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function toggle2Fa(Request $request)
     {
         $status = $request->get('status') === 1;
@@ -120,6 +142,11 @@ class TwoFactorController extends Controller
         ]);
     }
 
+    /**
+     * Reset 2FA for user and remove database records.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function reset2Fa()
     {
         auth()->user()->twoFa()->delete();
@@ -129,6 +156,11 @@ class TwoFactorController extends Controller
         ]);
     }
 
+    /**
+     * Get 2FA status for user.
+     *
+     * @return array
+     */
     public function getStatus()
     {
         $user = auth()->user();
@@ -141,6 +173,16 @@ class TwoFactorController extends Controller
         return $res;
     }
 
+    /**
+     * Get Google QR-code to add to app.
+     *
+     * @param $company
+     * @param $holder
+     * @param $secret
+     * @param $size
+     *
+     * @return string
+     */
     public function getQRCodeGoogleUrl($company, $holder, $secret, $size = 200)
     {
         $g2fa = new G2fa();
@@ -154,6 +196,16 @@ class TwoFactorController extends Controller
         );
     }
 
+    /**
+     * Generate Google QR-code url.
+     *
+     * @param $domain
+     * @param $page
+     * @param $queryParameters
+     * @param $qrCodeUrl
+     *
+     * @return string
+     */
     public static function generateGoogleQRCodeUrl($domain, $page, $queryParameters, $qrCodeUrl)
     {
         $url = $domain.
@@ -164,22 +216,34 @@ class TwoFactorController extends Controller
         return $url;
     }
 
-    // Form uses
-
+    /**
+     * Authenticate user using entered code.
+     *
+     * @param  Request  $request
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function authenticate(Request $request)
     {
         $request->validate([
             'one_time_password'=>'required',
         ]);
 
+        // Google 2FA type auth.
         if (auth()->user()->twoFa->type === 'google') {
             $authenticator = app(TwoFaAuthenticator::class)->boot(request());
 
             if ($authenticator->isAuthenticated()) {
+                Cache::put(
+                    Constants::SESSION_AUTH_PASSED . '_user_' . auth()->id(),
+                    true,
+                    now()->addDays(config('nova-two-factor.auth_caching_days'))
+                );
                 return redirect()->to(config('nova.path'));
             }
         }
 
+        // Email 2FA type auth.
         if (auth()->user()->twoFa->type === 'email') {
             $code = TwoFa::where('user_id', auth()->id())
                             ->where('email_code', $request->one_time_password)
@@ -187,7 +251,7 @@ class TwoFactorController extends Controller
                             ->first();
 
             if (!is_null($code)) {
-                Session::put('user_email_2fa', auth()->id());
+                Cache::put('user_' . auth()->id() . '_email_2fa', true);
                 return redirect()->to(config('nova.path'));
             }
         }
@@ -195,6 +259,13 @@ class TwoFactorController extends Controller
         return back()->withErrors(['Incorrect OTP !']);
     }
 
+    /**
+     * Recover 2FA access
+     *
+     * @param  Request  $request
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function recover(Request $request)
     {
         if ($request->isMethod('get')) {
@@ -210,6 +281,11 @@ class TwoFactorController extends Controller
         }
     }
 
+    /**
+     * Send email with 2FA code.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function sendOtpEmail()
     {
         auth()->user()->generateEmailCode();
@@ -219,6 +295,11 @@ class TwoFactorController extends Controller
         ]);
     }
 
+    /**
+     * Re-send email with 2FA code.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function resendEmail()
     {
         auth()->user()->generateEmailCode();
