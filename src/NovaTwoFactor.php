@@ -33,7 +33,7 @@ class NovaTwoFactor extends Tool
         });
 
         $user = Auth::user();
-        if (! $user->is2faRnabled() && $user->hasRole('Admin')) {
+        if (! $user->is2faRnabled() && $user->hasRole('Admin') && config('nova-two-factor.enabled')) {
             Nova::mainMenu(function (Request $request) {
                 return [];
             });
